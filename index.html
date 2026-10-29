@@ -292,7 +292,7 @@ $('pause').onclick=e=>{e.stopPropagation();togglePause()};window.musicPaused=()=
 $('help').onclick=e=>{e.stopPropagation();const wasP=paused;if(state=='play'&&!paused)togglePause();panel(`<h2>🐕 Dave's Dog Walking Challenge</h2><p>Dave walks dogs for clients all over town. Every pup needs a walk of a certain length and must be <b>returned home before sunset</b>.</p>
 <h3>How to play</h3><p>• <b>Tap street corners</b> to plan Dave's route. He walks the shortest way to each spot you tap.<br>• <b>Tap a client's house</b> to pick up their dog (if the leash has room).<br>• Every block Dave walks counts for <b>every dog on the leash</b>. One block = ⅛ mile.<br>• When a dog's ring is full ✅, walk past their house and Dave drops them off automatically.<br>• Need extra distance? Tap corners to make a loop.<br>• ↶ Undo removes your last tap. ⏩ speeds up time. 💡 suggests a smart next move.</p>
 <h3>Dog personalities</h3><p>💪 <b>Puller</b> — Dave walks 15% faster.<br>🐾 <b>Tiny legs</b> — 20% slower.<br>👃 <b>Sniffer</b> — stops every ½ mile to sniff.<br>🐘 <b>Big dog</b> — takes 2 leash spots.<br>💢 <b>Doesn't get along</b> with a certain dog — never on the leash together.</p>
-<h3>Stars</h3><p>★ everyone home before sunset · ★★ a tidy route · ★★★ as good as a pro. Every day was checked by a route solver, so ★★★ is always possible with the starting double leash.</p><p>Earn pay and tips, then visit the <b>Shop</b> for bigger leashes, running shoes and a treat pouch.</p>`,()=>{if(state=='play'&&!wasP&&paused)togglePause()})};
+<h3>Stars</h3><p>★ everyone home before sunset · ★★ a tidy route · ★★★ as good as a pro. Every day was checked by a route solver, so ★★★ is always possible with the starting double leash.</p><p>Earn pay and tips, then visit the <b>Shop</b> for bigger leashes, running shoes and a treat pouch.</p><h3 class="gp-help">🎮 Controller</h3><p class="gp-help">Stick moves the pointer and A taps (street corners, houses, buttons). LB / RB jump the pointer between buttons. X undo, Y fast-forward, Start pause, Select mute. Menus: D-pad to pick, A to select, B to go back.</p>`,()=>{if(state=='play'&&!wasP&&paused)togglePause()})};
 // ======================= RENDER =======================
 function onResize(){VW=CW/DPR;VH=CH/DPR;const aw=VW-SAFE.l-SAFE.r,ah=VH-SAFE.t-SAFE.b;SC=Math.min(aw/LW,ah/LH);OXs=SAFE.l+(aw-LW*SC)/2;OYs=SAFE.t+(ah-LH*SC)/2}
 function btn(x,y,w,h,label,fn,col='#2e8b57',fs=16){menuBtns.push({x,y,w,h,fn});g.fillStyle=col;rrect(g,x,y,w,h,12);g.fill();g.strokeStyle='#fff';g.lineWidth=2;g.stroke();g.fillStyle='#fff';g.font='bold '+fs+'px "Trebuchet MS",sans-serif';g.textAlign='center';g.fillText(label,x+w/2,y+h/2+fs*.36)}
@@ -735,4 +735,21 @@ window.__unlock={unlocked:un,sample:window.__SAMPLE||null,get badge(){return las
 #palbList li{min-height:30px;height:auto!important;font-size:16px!important}
 .tb{width:46px!important;height:46px!important}#mute{right:55px!important}#help{right:104px!important}
 </style>
+<!-- gamepad:start -->
+<script src="gamepad.js?v=1"></script>
+<script>
+(function(){if(typeof btn==='function'){var _b=btn;btn=function(x,y,w,h,label){var n=menuBtns.length,r=_b.apply(this,arguments);if(menuBtns.length>n&&typeof label==='string')menuBtns[menuBtns.length-1].label=label;return r}}})();
+GamepadSupport.init({
+ keys:{start:'KeyP',back:'KeyM',x:'KeyZ',y:'KeyF'},
+ menuKeys:{a:'Enter'},
+ noRepeat:['a','b','x','y','lb','rb','start','back'],
+ ignoreSel:'#dock,#mute,#pause,#help,#inst,#ios,.tb,#dockHint',
+ backSel:'#pclose',
+ menu:function(){var ov=!!document.querySelector('#palbOv.on,#smpLock.on');return ov||panelOpen||paused||state!=='play';},
+ cursor:function(){return !document.querySelector('#palbOv.on,#smpLock.on')&&!panelOpen&&!paused&&(state==='play');},
+ items:GamepadSupport.list(function(){return (document.querySelector('#palbOv.on,#smpLock.on')||panelOpen)?[]:menuBtns;},{scale:function(){return SC},origin:function(){return [OXs,OYs]}}),
+ back:function(){if(document.querySelector('#palbOv.on,#smpLock.on')||panelOpen)return false;var b=menuBtns.filter(function(x){return /^\W*(back|close|menu|done|✕|×)\W*$/i.test(x.label||'')})[0];if(b){b.fn();return true}return false;}
+});
+</script>
+<!-- gamepad:end -->
 </body></html>
